@@ -1,0 +1,9 @@
+authtoken: 2Nj7fFhEePMtH24gFsl9wJl3L0x_5sPPsz6uhBxaHoqMiQjLa
+version: 2
+tunnels:
+  tunnel1:
+    addr: 3000
+    proto: http
+  tunnel2:
+    addr: 3333
+    proto: http
