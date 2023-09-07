@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const Jobs = () => {
+    const backendUrl = 'http://202.157.185.132:3030';
     const [jobs, setJobs] = useState([]);
     const initialNewJobState = {
         job_name: '',
@@ -15,9 +16,10 @@ const Jobs = () => {
         shown: 0,
     };
     const [newJob, setNewJob] = useState(initialNewJobState);
+    const [dirtyJobs, setDirtyJobs] = useState({});
 
     useEffect(() => {
-        axios.get("http://localhost:3030/jobs").then((response) => {
+        axios.get(backendUrl + "/jobs").then((response) => {
             setJobs(response.data);
         });
     }, []);
@@ -40,11 +42,11 @@ const Jobs = () => {
         }
 
         try {
-            const response = await axios.post("http://localhost:3030/jobs", newJob);
+            const response = await axios.post(backendUrl + "/jobs", newJob);
             const createdJob = response.data;
             setJobs((prevJobs) => [...prevJobs, createdJob]);
             setNewJob(initialNewJobState);
-            axios.get("http://localhost:3030/jobs").then((response) => {
+            axios.get(backendUrl + "/jobs").then((response) => {
                 setJobs(response.data);
             });
         } catch (error) {
@@ -54,9 +56,9 @@ const Jobs = () => {
     };
 
     const handleEditJob = (job) => {
-        axios.put("http://localhost:3030/jobs/" + job.id, job).then((response) => {
+        axios.put(backendUrl + "/jobs/" + job.id, job).then((response) => {
             setJobs([...jobs, response.data]);
-            axios.get("http://localhost:3030/jobs").then((response) => {
+            axios.get(backendUrl + "/jobs").then((response) => {
                 setJobs(response.data);
             });
         });
@@ -66,6 +68,7 @@ const Jobs = () => {
         setJobs((prevJobs) => {
             const updatedJobs = prevJobs.map((job) => {
                 if (job.id === id) {
+                    setDirtyJobs((prevDirtyJobs) => ({ ...prevDirtyJobs, [id]: true }));
                     return { ...job, [fieldName]: value };
                 }
                 return job;
@@ -79,6 +82,7 @@ const Jobs = () => {
             const updatedJobs = prevJobs.map((job) => {
                 if (job.id === id) {
                     const updatedArray = value.split(';').map((item) => item.trim());
+                    setDirtyJobs((prevDirtyJobs) => ({ ...prevDirtyJobs, [id]: true }));
                     return { ...job, [fieldName]: updatedArray };
                 }
                 return job;
@@ -91,6 +95,7 @@ const Jobs = () => {
         setJobs((prevJobs) => {
             const updatedJobs = prevJobs.map((job) => {
                 if (job.id === id) {
+                    setDirtyJobs((prevDirtyJobs) => ({ ...prevDirtyJobs, [id]: true }));
                     return { ...job, shown: checked };
                 }
                 return job;
@@ -100,9 +105,24 @@ const Jobs = () => {
     };
 
     const handleDeleteJob = (id) => {
-        axios.delete("http://localhost:3030/jobs/" + id).then((response) => {
+        axios.delete(backendUrl + "/jobs/" + id).then((response) => {
             setJobs(jobs.filter((job) => job.id !== id));
         });
+    };
+
+    const confirmEditJob = (job) => {
+        const isConfirmed = window.confirm("Are you sure you want to edit this job?");
+        if (isConfirmed) {
+            handleEditJob(job);
+            setDirtyJobs((prevDirtyJobs) => ({ ...prevDirtyJobs, [job.id]: false }));
+        }
+    };
+
+    const confirmDeleteJob = (id) => {
+        const isConfirmed = window.confirm("Are you sure you want to delete this job?");
+        if (isConfirmed) {
+            handleDeleteJob(id);
+        }
     };
 
     return (
@@ -111,11 +131,11 @@ const Jobs = () => {
             <table className="min-w-full border border-gray-300">
                 <thead className="bg-gray-100">
                     <tr>
-                        <th className="px-4 py-2">ID</th>
+                        <th className="px-4 py-2">No.</th>
                         <th className="px-4 py-2">Job Name</th>
                         <th className="px-4 py-2">Location</th>
                         <th className="px-4 py-2">Work Time</th>
-                        <th className="px-4 py-2">Position</th>
+                        <th className="px-4 py-2">Industry</th>
                         <th className="px-4 py-2">Summary</th>
                         <th className="px-4 py-2">Requirements</th>
                         <th className="px-4 py-2">Job Description</th>
@@ -126,8 +146,8 @@ const Jobs = () => {
                 </thead>
                 <tbody>
                     {jobs.map((job, index) => (
-                        <tr key={index}>
-                            <td className="px-4 py-2">{job.id}</td>
+                        <tr key={job.id}>
+                            <td className="px-4 py-2">{index + 1}</td>
                             <td className="px-4 py-2">
                                 <input
                                     type="text"
@@ -215,8 +235,17 @@ const Jobs = () => {
                                 />
                             </td>
                             <td className="py-2 pr-2 text-center">
-                                <button onClick={() => handleEditJob(job)} className="px-2 py-1 rounded-md bg-blue-500 text-white hover:bg-blue-600 w-32 mb-1">Edit</button>
-                                <button onClick={() => handleDeleteJob(job.id)} className="px-2 py-1 rounded-md bg-red-500 text-white hover:bg-red-600 w-32 my-1">Delete</button>
+                                <button
+                                    onClick={() => confirmEditJob(job)}
+                                    disabled={!dirtyJobs[job.id]}
+                                    className={`px-2 py-1 rounded-md ${dirtyJobs[job.id]
+                                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                                            : "bg-gray-400 text-gray-600 cursor-not-allowed"
+                                        } w-32 mb-1`}
+                                >
+                                    Save Changes
+                                </button>
+                                <button onClick={() => confirmDeleteJob(job.id)} className="px-2 py-1 rounded-md bg-red-500 text-white hover:bg-red-600 w-32 my-1">Delete</button>
                             </td>
                         </tr>
                     ))
