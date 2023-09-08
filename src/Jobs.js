@@ -126,10 +126,9 @@ const Jobs = () => {
     };
 
     return (
-        <div className="overflow-auto">
-            <h1 className="text-2xl font-bold mb-4 w-full bg-white px-2 py-2 text-center">Jobs (reqs and jobdescs are separated by ; to render each item in a bulleted list in the website)</h1>
+        <div className="">
             <table className="min-w-full border border-gray-300">
-                <thead className="bg-gray-100">
+                <thead className="bg-gray-100 sticky top-0">
                     <tr>
                         <th className="px-4 py-2">No.</th>
                         <th className="px-4 py-2">Job Name</th>
@@ -137,14 +136,14 @@ const Jobs = () => {
                         <th className="px-4 py-2">Work Time</th>
                         <th className="px-4 py-2">Industry</th>
                         <th className="px-4 py-2">Summary</th>
-                        <th className="px-4 py-2">Requirements</th>
-                        <th className="px-4 py-2">Job Description</th>
+                        <th className="px-4 py-2">Requirements (;)</th>
+                        <th className="px-4 py-2">Job Description (;)</th>
                         <th className="px-4 py-2">Optional Info</th>
                         <th className="px-4 py-2">Shown</th>
                         <th className="px-4 py-2">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className="overflow-auto">
                     {jobs.map((job, index) => (
                         <tr key={job.id}>
                             <td className="px-4 py-2">{index + 1}</td>
