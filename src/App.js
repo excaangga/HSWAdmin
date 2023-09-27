@@ -16,7 +16,7 @@ function App() {
   const [pass, setPass] = useState(localStorage.getItem("password") || "");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState('Jobs');
-
+// 
   useEffect(() => {
     // Check if credentials are stored and not expired
     const storedUsername = localStorage.getItem("username");
