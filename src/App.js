@@ -9,7 +9,6 @@ import Youtube from "./Youtube";
 
 const username = process.env.REACT_APP_USERNAME;
 const password = process.env.REACT_APP_PASSWORD;
-const appVersion = "2";
 
 function App() {
   const [uname, setUname] = useState(localStorage.getItem("username") || "");
@@ -22,12 +21,6 @@ function App() {
     const storedUsername = localStorage.getItem("username");
     const storedPassword = localStorage.getItem("password");
     const timestamp = parseInt(localStorage.getItem("timestamp"));
-    const storedAppVersion = localStorage.getItem("appVersion");
-
-    if (storedAppVersion !== appVersion) {
-      localStorage.clear();
-      return;
-    }
 
     if (storedUsername === username && storedPassword === password) {
       if (timestamp && Date.now() - timestamp < 5 * 60 * 1000) {
