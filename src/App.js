@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import Jobs from "./Jobs";
 import Candidates from "./Candidates";
 import Industries from "./Industries";
+import Gmail from "./Gmail";
+import Linkedin from "./Linkedin";
+import Wa from "./Wa";
+import Youtube from "./Youtube";
 
 const username = process.env.REACT_APP_USERNAME;
 const password = process.env.REACT_APP_PASSWORD;
@@ -46,14 +50,14 @@ function App() {
         return <Candidates />;
       case 'Industries':
         return <Industries />;
-      // case 'Gmail':
-      //   return <Gmail />;
-      // case 'Linkedin':
-      //   return <Linkedin />;
-      // case 'Wa':
-      //   return <Wa />;
-      // case 'Youtube':
-      //   return <Youtube />;
+      case 'Gmail':
+        return <Gmail />;
+      case 'Linkedin':
+        return <Linkedin />;
+      case 'Wa':
+        return <Wa />;
+      case 'Youtube':
+        return <Youtube />;
 
       // case 'Clients':
       //   return <Clients />;
