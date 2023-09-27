@@ -9,7 +9,7 @@ import Youtube from "./Youtube";
 
 const username = process.env.REACT_APP_USERNAME;
 const password = process.env.REACT_APP_PASSWORD;
-const appVersion = "1";
+const appVersion = "2";
 
 function App() {
   const [uname, setUname] = useState(localStorage.getItem("username") || "");
