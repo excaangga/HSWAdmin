@@ -36,8 +36,13 @@ const Jobs = () => {
     };
 
     const handleAddJob = async () => {
-        if (!newJob.job_name) {
-            alert('Job Name is required');
+        if (
+            !newJob.job_name ||
+            !newJob.location ||
+            !newJob.work_time ||
+            !newJob.position
+        ) {
+            alert('Please fill in all required fields.');
             return;
         }
 
@@ -111,6 +116,15 @@ const Jobs = () => {
     };
 
     const confirmEditJob = (job) => {
+        if (
+            !job.job_name ||
+            !job.location ||
+            !job.work_time ||
+            !job.position
+        ) {
+            alert('Please fill in all required fields.');
+            return;
+        }
         const isConfirmed = window.confirm("Are you sure you want to edit this job?");
         if (isConfirmed) {
             handleEditJob(job);
@@ -127,14 +141,14 @@ const Jobs = () => {
 
     return (
         <div className="">
-            <table className="min-w-full border border-gray-300">
-                <thead className="bg-gray-100 sticky top-0">
+            <table className="min-w-full">
+                <thead className="bg-gray-100 sticky top-14">
                     <tr>
                         <th className="px-4 py-2">No.</th>
-                        <th className="px-4 py-2">Job Name</th>
-                        <th className="px-4 py-2">Location</th>
-                        <th className="px-4 py-2">Work Time</th>
-                        <th className="px-4 py-2">Industry</th>
+                        <th className="px-4 py-2">Job Name <span className="text-red-500">*</span></th>
+                        <th className="px-4 py-2">Location <span className="text-red-500">*</span></th>
+                        <th className="px-4 py-2">Work Time <span className="text-red-500">*</span></th>
+                        <th className="px-4 py-2">Industry <span className="text-red-500">*</span></th>
                         <th className="px-4 py-2">Summary</th>
                         <th className="px-4 py-2">Requirements (;)</th>
                         <th className="px-4 py-2">Job Description (;)</th>
@@ -150,8 +164,6 @@ const Jobs = () => {
                             <td className="px-4 py-2">
                                 <input
                                     type="text"
-                                    id="jobName"
-                                    name="jobName"
                                     defaultValue={job.job_name}
                                     onChange={(e) => handleInputChange(job.id, 'job_name', e.target.value)}
                                     className="border border-gray-300 px-2 py-1 rounded-md w-64"
@@ -160,8 +172,6 @@ const Jobs = () => {
                             <td className="px-4 py-2">
                                 <input
                                     type="text"
-                                    id="location"
-                                    name="location"
                                     defaultValue={job.location}
                                     onChange={(e) => handleInputChange(job.id, 'location', e.target.value)}
                                     className="border border-gray-300 px-2 py-1 rounded-md w-64"
@@ -170,8 +180,6 @@ const Jobs = () => {
                             <td className="px-4 py-2">
                                 <input
                                     type="text"
-                                    id="workTime"
-                                    name="workTime"
                                     defaultValue={job.work_time}
                                     onChange={(e) => handleInputChange(job.id, 'work_time', e.target.value)}
                                     className="border border-gray-300 px-2 py-1 rounded-md w-64"
@@ -180,8 +188,6 @@ const Jobs = () => {
                             <td className="px-4 py-2">
                                 <input
                                     type="text"
-                                    id="position"
-                                    name="position"
                                     defaultValue={job.position}
                                     onChange={(e) => handleInputChange(job.id, 'position', e.target.value)}
                                     className="border border-gray-300 px-2 py-1 rounded-md w-64"
@@ -189,8 +195,6 @@ const Jobs = () => {
                             </td>
                             <td className="px-4 py-2">
                                 <textarea
-                                    id="summary"
-                                    name="summary"
                                     defaultValue={job.summary}
                                     onChange={(e) => handleInputChange(job.id, 'summary', e.target.value)}
                                     className="border border-gray-300 px-2 py-1 rounded-md w-96 h-32 resize-none"
@@ -198,8 +202,6 @@ const Jobs = () => {
                             </td>
                             <td className="px-4 py-2">
                                 <textarea
-                                    id="requirements"
-                                    name="requirements"
                                     defaultValue={job.requirements && job.requirements.join('; ')}
                                     onChange={(e) => handleArrayInputChange(job.id, 'requirements', e.target.value)}
                                     className="border border-gray-300 px-2 py-1 rounded-md w-96 h-32 resize-none"
@@ -207,8 +209,6 @@ const Jobs = () => {
                             </td>
                             <td className="px-4 py-2">
                                 <textarea
-                                    id="jobDesc"
-                                    name="jobDesc"
                                     defaultValue={job.job_desc && job.job_desc.join('; ')}
                                     onChange={(e) => handleArrayInputChange(job.id, 'job_desc', e.target.value)}
                                     className="border border-gray-300 px-2 py-1 rounded-md w-96 h-32 resize-none"
@@ -216,8 +216,6 @@ const Jobs = () => {
                             </td>
                             <td className="px-4 py-2">
                                 <textarea
-                                    id="optionalInfo"
-                                    name="optionalInfo"
                                     defaultValue={job.optional_info}
                                     onChange={(e) => handleInputChange(job.id, 'optional_info', e.target.value)}
                                     className="border border-gray-300 px-2 py-1 rounded-md w-96 h-32 resize-none"
@@ -226,25 +224,25 @@ const Jobs = () => {
                             <td className="px-2 py-2 text-center">
                                 <input
                                     type="checkbox"
-                                    id="shown"
-                                    name="shown"
                                     defaultChecked={job.shown}
                                     onChange={(e) => handleCheckboxChange(job.id, e.target.checked)}
                                     className="border border-gray-300 px-2 py-1 rounded-md"
                                 />
                             </td>
                             <td className="py-2 pr-2 text-center">
-                                <button
-                                    onClick={() => confirmEditJob(job)}
-                                    disabled={!dirtyJobs[job.id]}
-                                    className={`px-2 py-1 rounded-md ${dirtyJobs[job.id]
-                                            ? "bg-blue-500 text-white hover:bg-blue-600"
-                                            : "bg-gray-400 text-gray-600 cursor-not-allowed"
-                                        } w-32 mb-1`}
-                                >
-                                    Save Changes
-                                </button>
-                                <button onClick={() => confirmDeleteJob(job.id)} className="px-2 py-1 rounded-md bg-red-500 text-white hover:bg-red-600 w-32 my-1">Delete</button>
+                                <div className="h-full grid grid-cols-1">
+                                    <button
+                                        onClick={() => confirmEditJob(job)}
+                                        disabled={!dirtyJobs[job.id]}
+                                        className={`px-2 py-1 col-span-1 rounded-md ${dirtyJobs[job.id]
+                                                ? "bg-blue-500 text-white hover:bg-blue-600"
+                                                : "bg-gray-400 text-gray-600 cursor-not-allowed"
+                                            } w-32 mb-1`}
+                                    >
+                                        Save Changes
+                                    </button>
+                                    <button onClick={() => confirmDeleteJob(job.id)} className="px-2 py-1  col-span-1 rounded-md bg-red-500 text-white hover:bg-red-600 w-32 my-1">Delete</button>
+                                </div>
                             </td>
                         </tr>
                     ))
@@ -254,8 +252,6 @@ const Jobs = () => {
                         <td className="px-4 py-2">
                             <input
                                 type="text"
-                                id="newJobName"
-                                name="newJobName"
                                 value={newJob.job_name}
                                 onChange={(e) => handleNewInputChange('job_name', e.target.value)}
                                 className="border border-gray-300 px-2 py-1 rounded-md w-64"
@@ -264,8 +260,6 @@ const Jobs = () => {
                         <td className="px-4 py-2">
                             <input
                                 type="text"
-                                id="newLocation"
-                                name="newLocation"
                                 value={newJob.location}
                                 onChange={(e) => handleNewInputChange('location', e.target.value)}
                                 className="border border-gray-300 px-2 py-1 rounded-md w-64"
@@ -274,8 +268,6 @@ const Jobs = () => {
                         <td className="px-4 py-2">
                             <input
                                 type="text"
-                                id="newWorkTime"
-                                name="newWorkTime"
                                 value={newJob.work_time}
                                 onChange={(e) => handleNewInputChange('work_time', e.target.value)}
                                 className="border border-gray-300 px-2 py-1 rounded-md w-64"
@@ -284,8 +276,6 @@ const Jobs = () => {
                         <td className="px-4 py-2">
                             <input
                                 type="text"
-                                id="newPosition"
-                                name="newPosition"
                                 value={newJob.position}
                                 onChange={(e) => handleNewInputChange('position', e.target.value)}
                                 className="border border-gray-300 px-2 py-1 rounded-md w-64"
@@ -294,8 +284,6 @@ const Jobs = () => {
                         <td className="px-4 py-2">
                             <input
                                 type="text"
-                                id="newSummary"
-                                name="newSummary"
                                 value={newJob.summary}
                                 onChange={(e) => handleNewInputChange('summary', e.target.value)}
                                 className="border border-gray-300 px-2 py-1 rounded-md w-96 h-32 resize-none"
@@ -304,8 +292,6 @@ const Jobs = () => {
                         <td className="px-4 py-2">
                             <input
                                 type="text"
-                                id="newRequirements"
-                                name="newRequirements"
                                 value={newJob.requirements && newJob.requirements.join('; ')}
                                 onChange={(e) => handleNewArrayInputChange('requirements', e.target.value)}
                                 className="border border-gray-300 px-2 py-1 rounded-md w-96 h-32 resize-none"
@@ -314,8 +300,6 @@ const Jobs = () => {
                         <td className="px-4 py-2">
                             <input
                                 type="text"
-                                id="newJobDesc"
-                                name="newJobDesc"
                                 value={newJob.job_desc && newJob.job_desc.join('; ')}
                                 onChange={(e) => handleNewArrayInputChange('job_desc', e.target.value)}
                                 className="border border-gray-300 px-2 py-1 rounded-md w-96 h-32 resize-none"
@@ -324,8 +308,6 @@ const Jobs = () => {
                         <td className="px-4 py-2">
                             <input
                                 type="text"
-                                id="newOptionalInfo"
-                                name="newOptionalInfo"
                                 value={newJob.optional_info}
                                 onChange={(e) => handleNewInputChange('optional_info', e.target.value)}
                                 className="border border-gray-300 px-2 py-1 rounded-md w-96 h-32 resize-none"
@@ -334,8 +316,6 @@ const Jobs = () => {
                         <td className="py-2 pr-2 text-center">
                             <input
                                 type="checkbox"
-                                id="newShown"
-                                name="newShown"
                                 checked={newJob.shown}
                                 onChange={(e) => handleNewInputChange('shown', e.target.checked)}
                                 className="border border-gray-300 px-2 py-1 rounded-md"

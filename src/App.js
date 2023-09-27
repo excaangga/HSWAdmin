@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Jobs from "./Jobs";
+import Candidates from "./Candidates";
 
 const username = process.env.REACT_APP_USERNAME;
 const password = process.env.REACT_APP_PASSWORD;
@@ -8,6 +9,7 @@ function App() {
   const [uname, setUname] = useState(localStorage.getItem("username") || "");
   const [pass, setPass] = useState(localStorage.getItem("password") || "");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [activeTab, setActiveTab] = useState('Jobs');
 
   useEffect(() => {
     // Check if credentials are stored and not expired
@@ -35,8 +37,47 @@ function App() {
     }
   };
 
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'Jobs':
+        return <Jobs />;
+      case 'Candidates':
+        return <Candidates />;
+      // case 'Industries':
+      //   return <Industries />;
+      // case 'Gmail':
+      //   return <Gmail />;
+      // case 'Linkedin':
+      //   return <Linkedin />;
+      // case 'Wa':
+      //   return <Wa />;
+      // case 'Youtube':
+      //   return <Youtube />;
+
+      // case 'Clients':
+      //   return <Clients />;
+      // case 'Hero':
+      //   return <Hero />;
+      // case 'Testimony':
+      //   return <Testimony />;
+    }
+  };
+
   if (isLoggedIn) {
-    return <Jobs />;
+    return (
+      <div className="w-max">
+        <div className="flex space-x-3 mx-4 sticky top-0 bg-white h-max min-w-full">
+          <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Jobs' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Jobs')}>Jobs</button>
+          <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Candidates' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Candidates')}>Candidates</button>
+          <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Industries' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Industries')}>Industries</button>
+          <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Gmail' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Gmail')}>Gmail</button>
+          <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Linkedin' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Linkedin')}>Linkedin</button>
+          <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Wa' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Wa')}>Wa</button>
+          <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Youtube' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Youtube')}>Youtube</button>
+        </div>
+        {renderTabContent()}
+      </div>
+    );
   }
 
   return (
