@@ -1,50 +1,48 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const Candidates = () => {
+const Industries = () => {
     const backendUrl = 'http://202.157.185.132:3030';
-    const [candidates, setCandidates] = useState([]);
+    const [industries, setIndustries] = useState([]);
     const initialNewDataState = {
-        candidate_job: '',
-        description: '',
+        industry_name: '',
         shown: 0,
     };
-    const [newCandidate, setNewCandidate] = useState(initialNewDataState);
+    const [newIndustry, setNewIndustry] = useState(initialNewDataState);
     const [dirtyData, setDirtyData] = useState({});
 
     useEffect(() => {
-        axios.get(backendUrl + "/candidates").then((response) => {
-            setCandidates(response.data);
+        axios.get(backendUrl + "/industries").then((response) => {
+            setIndustries(response.data);
         });
     }, []);
 
     const handleNewInputChange = (key, value) => {
-        setNewCandidate((prevCandidate) => ({ ...prevCandidate, [key]: value }));
+        setNewIndustry((prevData) => ({ ...prevData, [key]: value }));
     };
 
     const handleNewArrayInputChange = (field, value) => {
-        setNewCandidate((prevNewCandidate) => ({
-            ...prevNewCandidate,
+        setNewIndustry((prevNewData) => ({
+            ...prevNewData,
             [field]: value.split(';').map((item) => item.trim()),
         }));
     };
 
     const handleAddData = async () => {
         if (
-            !newCandidate.candidate_job ||
-            !newCandidate.description
+            !newIndustry.industry_name
         ) {
             alert('Please fill in all required fields.');
             return;
         }
 
         try {
-            const response = await axios.post(backendUrl + "/candidates", newCandidate);
-            const createdCandidate = response.data;
-            setCandidates((prevCandidates) => [...prevCandidates, createdCandidate]);
-            setNewCandidate(initialNewDataState);
-            axios.get(backendUrl + "/candidates").then((response) => {
-                setCandidates(response.data);
+            const response = await axios.post(backendUrl + "/industries", newIndustry);
+            const createdIndustry = response.data;
+            setIndustries((prevData) => [...prevData, createdIndustry]);
+            setNewIndustry(initialNewDataState);
+            axios.get(backendUrl + "/industries").then((response) => {
+                setIndustries(response.data);
             });
         } catch (error) {
             console.error('Error creating data:', error);
@@ -53,17 +51,17 @@ const Candidates = () => {
     };
 
     const handleEditData = (data) => {
-        axios.put(backendUrl + "/candidates/" + data.id, data).then((response) => {
-            setCandidates([...candidates, response.data]);
-            axios.get(backendUrl + "/candidates").then((response) => {
-                setCandidates(response.data);
+        axios.put(backendUrl + "/industries/" + data.id, data).then((response) => {
+            setIndustries([...industries, response.data]);
+            axios.get(backendUrl + "/industries").then((response) => {
+                setIndustries(response.data);
             });
         });
     };
 
     const handleInputChange = (id, fieldName, value) => {
-        setCandidates((prevCandidates) => {
-            const updatedData = prevCandidates.map((data) => {
+        setIndustries((prevData) => {
+            const updatedData = prevData.map((data) => {
                 if (data.id === id) {
                     setDirtyData((prevDirtyData) => ({ ...prevDirtyData, [id]: true }));
                     return { ...data, [fieldName]: value };
@@ -75,8 +73,8 @@ const Candidates = () => {
     };
 
     const handleArrayInputChange = (id, fieldName, value) => {
-        setCandidates((prevCandidates) => {
-            const updatedData = prevCandidates.map((data) => {
+        setIndustries((prevData) => {
+            const updatedData = prevData.map((data) => {
                 if (data.id === id) {
                     const updatedArray = value.split(';').map((item) => item.trim());
                     setDirtyData((prevDirtyData) => ({ ...prevDirtyData, [id]: true }));
@@ -89,8 +87,8 @@ const Candidates = () => {
     };
 
     const handleCheckboxChange = (id, checked) => {
-        setCandidates((prevCandidates) => {
-            const updatedData = prevCandidates.map((data) => {
+        setIndustries((prevData) => {
+            const updatedData = prevData.map((data) => {
                 if (data.id === id) {
                     setDirtyData((prevDirtyData) => ({ ...prevDirtyData, [id]: true }));
                     return { ...data, shown: checked };
@@ -102,15 +100,14 @@ const Candidates = () => {
     };
 
     const handleDeleteData = (id) => {
-        axios.delete(backendUrl + "/candidates/" + id).then((response) => {
-            setCandidates(candidates.filter((data) => data.id !== id));
+        axios.delete(backendUrl + "/industries/" + id).then((response) => {
+            setIndustries(industries.filter((data) => data.id !== id));
         });
     };
 
     const confirmEditData = (data) => {
         if (
-            !data.candidate_job ||
-            !data.description
+            !data.industry_name
         ) {
             alert('Please fill in all required fields.');
             return;
@@ -136,29 +133,21 @@ const Candidates = () => {
                 <thead className="bg-gray-100 sticky top-14">
                     <tr>
                         <th className="px-4 py-2">No.</th>
-                        <th className="px-4 py-2">Candidate Job <span className="text-red-500">*</span></th>
-                        <th className="px-4 py-2">Description <span className="text-red-500">*</span></th>
+                        <th className="px-4 py-2">Industry Name <span className="text-red-500">*</span></th>
                         <th className="px-4 py-2">Shown</th>
                         <th className="px-4 py-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody className="overflow-auto">
-                    {candidates.map((data, index) => (
+                    {industries.map((data, index) => (
                         <tr key={data.id}>
                             <td className="px-4 py-2">{index + 1}</td>
                             <td className="px-4 py-2">
                                 <input
                                     type="text"
-                                    defaultValue={data.candidate_job}
-                                    onChange={(e) => handleInputChange(data.id, 'candidate_job', e.target.value)}
+                                    defaultValue={data.industry_name}
+                                    onChange={(e) => handleInputChange(data.id, 'industry_name', e.target.value)}
                                     className="border border-gray-300 px-2 py-1 rounded-md w-64"
-                                />
-                            </td>
-                            <td className="px-4 py-2">
-                                <textarea
-                                    defaultValue={data.description}
-                                    onChange={(e) => handleInputChange(data.id, 'description', e.target.value)}
-                                    className="border border-gray-300 px-2 py-1 rounded-md w-96 h-32 resize-none"
                                 />
                             </td>
                             <td className="px-2 py-2 text-center">
@@ -192,23 +181,15 @@ const Candidates = () => {
                         <td className="px-4 py-2">
                             <input
                                 type="text"
-                                value={newCandidate.candidate_job}
-                                onChange={(e) => handleNewInputChange('candidate_job', e.target.value)}
+                                value={newIndustry.industry_name}
+                                onChange={(e) => handleNewInputChange('industry_name', e.target.value)}
                                 className="border border-gray-300 px-2 py-1 rounded-md w-64"
-                            />
-                        </td>
-                        <td className="px-4 py-2">
-                            <input
-                                type="text-area"
-                                value={newCandidate.description}
-                                onChange={(e) => handleNewInputChange('description', e.target.value)}
-                                className="border border-gray-300 px-2 py-1 rounded-md w-96 h-32 resize-none"
                             />
                         </td>
                         <td className="py-2 pr-2 text-center">
                             <input
                                 type="checkbox"
-                                checked={newCandidate.shown}
+                                checked={newIndustry.shown}
                                 onChange={(e) => handleNewInputChange('shown', e.target.checked)}
                                 className="border border-gray-300 px-2 py-1 rounded-md"
                             />
@@ -223,4 +204,4 @@ const Candidates = () => {
     )
 }
 
-export default Candidates;
+export default Industries;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Jobs from "./Jobs";
 import Candidates from "./Candidates";
+import Industries from "./Industries";
 
 const username = process.env.REACT_APP_USERNAME;
 const password = process.env.REACT_APP_PASSWORD;
@@ -43,8 +44,8 @@ function App() {
         return <Jobs />;
       case 'Candidates':
         return <Candidates />;
-      // case 'Industries':
-      //   return <Industries />;
+      case 'Industries':
+        return <Industries />;
       // case 'Gmail':
       //   return <Gmail />;
       // case 'Linkedin':
