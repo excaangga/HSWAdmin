@@ -6,41 +6,163 @@ import Gmail from "./Gmail";
 import Linkedin from "./Linkedin";
 import Wa from "./Wa";
 import Youtube from "./Youtube";
-
-const username = process.env.REACT_APP_USERNAME;
-const password = process.env.REACT_APP_PASSWORD;
+import axios from "axios";
+const bcrypt = require('bcryptjs');
 
 function App() {
-  const [uname, setUname] = useState(localStorage.getItem("username") || "");
-  const [pass, setPass] = useState(localStorage.getItem("password") || "");
+  const [uname, setUname] = useState("");
+  const [pass, setPass] = useState("");
+  const [newPass, setNewPass] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState('Jobs');
+  const backendUrl = 'http://202.157.185.132:3030';
+  const [res, setRes] = useState([]);
+  const [activeMenu, setActiveMenu] = useState('login');
 
   useEffect(() => {
-    // Check if credentials are stored and not expired
-    const storedUsername = localStorage.getItem("username");
-    const storedPassword = localStorage.getItem("password");
+    axios.get(backendUrl + "/auth/" + 'hswadmin').then((response) => {
+      setRes(response.data);
+    });
+
+
     const timestamp = parseInt(localStorage.getItem("timestamp"));
-
-    if (storedUsername === username && storedPassword === password) {
-      if (timestamp && Date.now() - timestamp < 5 * 60 * 1000) {
-        setIsLoggedIn(true);
-      }
+    if (timestamp && Date.now() - timestamp < 5 * 60 * 1000) {
+      setIsLoggedIn(true);
     }
-  }, [username, password]);
+  }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (uname === username && pass === password) {
-      // Store credentials and timestamp in localStorage
-      localStorage.setItem("username", uname);
-      localStorage.setItem("password", pass);
+  const handleLogout = () => {
+    localStorage.clear(); // Clear all local storage
+    setIsLoggedIn(false);
+  };
+
+  async function handleSubmit() {
+    const rows = res;
+    console.log(rows)
+    const match = await bcrypt.compare(pass, rows.password);
+    console.log(match)
+    if (match) {
       localStorage.setItem("timestamp", Date.now().toString());
       setIsLoggedIn(true);
     } else {
       alert("Wrong credential.");
     }
   };
+
+  async function handleReset() {
+    const rows = res;
+    const match = await bcrypt.compare(pass, rows.password);
+    const isConfirmed = window.confirm("Are you sure you want to change your password?");
+    if (isConfirmed) {
+      if (match) {
+        await axios.put(backendUrl + "/auth/" + uname, {
+          password: newPass,
+        });
+      } else {
+        alert("Wrong credential.");
+      }
+    }
+  };
+
+  const renderMenu = () => {
+    switch (activeMenu) {
+      case 'login':
+        return (
+          <div>
+            <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                  Username
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="text"
+                  placeholder="Username"
+                  value={uname}
+                  onChange={(e) => setUname(e.target.value)}
+                />
+              </div>
+              <div className="mb-6">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                  Password
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                  id="password"
+                  type="password"
+                  placeholder="Password"
+                  value={pass}
+                  onChange={(e) => setPass(e.target.value)}
+                />
+              </div>
+              <div className="flex items-center justify-center">
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  type="submit"
+                >
+                  Log in
+                </button>
+              </div>
+            </form>
+          </div>
+        );
+      case 'reset':
+        return (
+          <div>
+            <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleReset}>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                  Username
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="text"
+                  placeholder="Username"
+                  value={uname}
+                  onChange={(e) => setUname(e.target.value)}
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                  Password
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                  id="password"
+                  type="password"
+                  placeholder="Password"
+                  value={pass}
+                  onChange={(e) => setPass(e.target.value)}
+                />
+              </div>
+              <div className="mb-6">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="newpassword">
+                  New Password
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                  id="newpassword"
+                  type="password"
+                  placeholder="New Password"
+                  value={newPass}
+                  onChange={(e) => setNewPass(e.target.value)}
+                />
+              </div>
+              <div className="flex items-center justify-center">
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  type="submit"
+                >
+                  Log in
+                </button>
+              </div>
+            </form>
+          </div>
+        )
+    }
+  }
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -79,6 +201,7 @@ function App() {
           <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Linkedin' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Linkedin')}>Linkedin</button>
           <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Wa' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Wa')}>Wa</button>
           <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Youtube' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Youtube')}>Youtube</button>
+          <button className={`px-3 py-2 my-2 border bg-red-300 hover:bg-red-500 rounded-md`} onClick={handleLogout}>Logout</button>
         </div>
         {renderTabContent()}
       </div>
@@ -86,43 +209,12 @@ function App() {
   }
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-            Username
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="username"
-            type="text"
-            placeholder="Username"
-            value={uname}
-            onChange={(e) => setUname(e.target.value)}
-          />
-        </div>
-        <div className="mb-6">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-            Password
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-            id="password"
-            type="password"
-            placeholder="Password"
-            value={pass}
-            onChange={(e) => setPass(e.target.value)}
-          />
-        </div>
-        <div className="flex items-center justify-center">
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="submit"
-          >
-            Log in
-          </button>
-        </div>
-      </form>
+    <div className="w-96 mx-auto mt-32">
+      <div className="flex justify-center items-center space-x-2">
+        <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeMenu === 'login' ? 'bg-blue-300' : ''}`} onClick={() => setActiveMenu('login')}>Login</button>
+        <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeMenu === 'reset' ? 'bg-blue-300' : ''}`} onClick={() => setActiveMenu('reset')}>Reset Password</button>
+      </div>
+      {renderMenu()}
     </div>
   );
 }
