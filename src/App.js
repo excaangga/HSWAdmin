@@ -33,8 +33,11 @@ function App() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.clear(); // Clear all local storage
-    setIsLoggedIn(false);
+    const isConfirmed = window.confirm("Are you sure you want to logout?");
+    if (isConfirmed) {
+      localStorage.clear(); // Clear all local storage
+      setIsLoggedIn(false);
+    }
   };
 
   async function handleSubmit() {
