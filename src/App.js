@@ -55,7 +55,7 @@ function App() {
     const isConfirmed = window.confirm("Are you sure you want to change your password?");
     if (isConfirmed) {
       if (match) {
-        await axios.put(backendUrl + "/auth/" + uname, {
+        await axios.put(backendUrl + "/auth/" + 'adminhsw', {
           password: newPass,
         });
       } else {
