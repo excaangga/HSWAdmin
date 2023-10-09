@@ -10,9 +10,10 @@ import axios from "axios";
 const bcrypt = require('bcryptjs');
 
 function App() {
-  const [uname, setUname] = useState("");
+  const [uname, setUname] = useState("adminhsw");
   const [pass, setPass] = useState("");
   const [newPass, setNewPass] = useState("");
+  const [newPassConfirm, setNewPassConfirm] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState('Jobs');
   const backendUrl = 'http://202.157.185.132:3030';
@@ -20,7 +21,7 @@ function App() {
   const [activeMenu, setActiveMenu] = useState('login');
 
   useEffect(() => {
-    axios.get(backendUrl + "/auth/" + 'adminhsw').then((response) => {
+    axios.get(backendUrl + "/auth/" + uname).then((response) => {
       setRes(response.data);
     });
 
@@ -38,7 +39,6 @@ function App() {
 
   async function handleSubmit() {
     const rows = res;
-    console.log(rows)
     const match = await bcrypt.compare(pass, rows.password);
     console.log(match)
     if (match) {
@@ -49,17 +49,25 @@ function App() {
     }
   };
 
-  async function handleReset() {
+  async function handleReset(e) {
+    e.preventDefault();
     const rows = res;
     const match = await bcrypt.compare(pass, rows.password);
+    console.log(match)
     const isConfirmed = window.confirm("Are you sure you want to change your password?");
     if (isConfirmed) {
-      if (match) {
-        await axios.put(backendUrl + "/auth/" + 'adminhsw', {
-          password: newPass,
-        });
+      if (newPass === newPassConfirm) {
+        if (match) {
+          await axios.put(backendUrl + "/auth/" + uname, {
+            password: newPass,
+          });
+          alert("Password has been changed.");
+          window.location.reload(true)
+        } else {
+          alert("Wrong credential.");
+        }
       } else {
-        alert("Wrong credential.");
+        alert("New password confirmation isn't the same.")
       }
     }
   };
@@ -79,7 +87,6 @@ function App() {
                   id="username"
                   type="text"
                   placeholder="Username"
-                  value={uname}
                   onChange={(e) => setUname(e.target.value)}
                 />
               </div>
@@ -92,7 +99,6 @@ function App() {
                   id="password"
                   type="password"
                   placeholder="Password"
-                  value={pass}
                   onChange={(e) => setPass(e.target.value)}
                 />
               </div>
@@ -120,7 +126,6 @@ function App() {
                   id="username"
                   type="text"
                   placeholder="Username"
-                  value={uname}
                   onChange={(e) => setUname(e.target.value)}
                 />
               </div>
@@ -133,7 +138,6 @@ function App() {
                   id="password"
                   type="password"
                   placeholder="Password"
-                  value={pass}
                   onChange={(e) => setPass(e.target.value)}
                 />
               </div>
@@ -146,8 +150,19 @@ function App() {
                   id="newpassword"
                   type="password"
                   placeholder="New Password"
-                  value={newPass}
                   onChange={(e) => setNewPass(e.target.value)}
+                />
+              </div>
+              <div className="mb-6">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="newpassword">
+                  Confirm New Password
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                  id="newpasswordconfirm"
+                  type="password"
+                  placeholder="Confirm New Password"
+                  onChange={(e) => setNewPassConfirm(e.target.value)}
                 />
               </div>
               <div className="flex items-center justify-center">
