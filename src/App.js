@@ -20,7 +20,7 @@ function App() {
   const [activeMenu, setActiveMenu] = useState('login');
 
   useEffect(() => {
-    axios.get(backendUrl + "/auth/" + 'hswadmin').then((response) => {
+    axios.get(backendUrl + "/auth/" + 'adminhsw').then((response) => {
       setRes(response.data);
     });
 
