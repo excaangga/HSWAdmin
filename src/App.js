@@ -6,6 +6,9 @@ import Gmail from "./Gmail";
 import Linkedin from "./Linkedin";
 import Wa from "./Wa";
 import Youtube from "./Youtube";
+import Hero from "./Hero";
+import Clients from "./Clients";
+import Logo from "./Logo";
 import axios from "axios";
 const bcrypt = require('bcryptjs');
 
@@ -198,11 +201,12 @@ function App() {
         return <Wa />;
       case 'Youtube':
         return <Youtube />;
-
-      // case 'Clients':
-      //   return <Clients />;
-      // case 'Hero':
-      //   return <Hero />;
+      case 'Hero':
+        return <Hero />;
+      case 'Clients':
+        return <Clients />;
+      case 'Logo':
+        return <Logo />;
       // case 'Testimony':
       //   return <Testimony />;
     }
@@ -219,6 +223,9 @@ function App() {
           <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Linkedin' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Linkedin')}>Linkedin</button>
           <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Wa' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Wa')}>Wa</button>
           <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Youtube' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Youtube')}>Youtube</button>
+          <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Hero' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Hero')}>Home Image</button>
+          <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Clients' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Clients')}>Clients Logo</button>
+          <button className={`px-3 py-2 my-2 border border-blue-300 hover:bg-gray-300 rounded-md ${activeTab === 'Logo' ? 'bg-blue-300' : ''}`} onClick={() => setActiveTab('Logo')}>Web Logo</button>
           <button className={`px-3 py-2 my-2 border bg-red-300 hover:bg-red-500 rounded-md`} onClick={handleLogout}>Logout</button>
         </div>
         {renderTabContent()}
